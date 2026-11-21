@@ -1,0 +1,37 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    name: Pruebas unitarias y mypy
+    runs-on: ubuntu-latest
+    steps:
+      - name: Descargar el repositorio
+        uses: actions/checkout@v4
+
+      - name: Instalar uv
+        uses: astral-sh/setup-uv@v6
+        with:
+          version: "0.13.9"
+          python-version: "3.12"
+          enable-cache: true
+
+      - name: Comprobar que el lockfile está sincronizado
+        run: uv lock --check
+
+      - name: Instalar dependencias desde uv.lock
+        run: uv sync --locked --extra dev --python 3.12
+
+      # Las pruebas de integración requieren un Prowlarr local con credenciales
+      # y quedan excluidas explícitamente: CI no necesita secretos.
+      - name: Pruebas unitarias
+        run: uv run --no-sync pytest -q -m "not integration"
+
+      - name: Comprobación de tipos
+        run: uv run --no-sync mypy

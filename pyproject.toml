@@ -1,0 +1,67 @@
+[build-system]
+requires = ["hatchling>=1.27"]
+build-backend = "hatchling.build"
+
+[project]
+name = "multimedia-search-mcp"
+version = "0.1.0"
+description = "Servidor MCP de solo lectura para buscar contenido multimedia mediante proveedores intercambiables (Prowlarr como primera implementación)."
+readme = "README.md"
+requires-python = ">=3.12"
+license = "MIT"
+license-files = ["LICENSE"]
+authors = [{ name = "juancarloscode13" }]
+keywords = ["mcp", "multimedia", "prowlarr", "search"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: End Users/Desktop",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.14",
+]
+dependencies = [
+    "mcp>=2.3.0,<3",
+    "httpx>=0.28.1,<1",
+    "python-dotenv>=1.0,<2",
+    "pydantic>=2.7,<3",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.3",
+    "pytest-asyncio>=1.0",
+    "mypy>=1.13",
+]
+
+[project.scripts]
+multimedia-search-mcp = "multimedia_search_mcp.__main__:main"
+
+# [project.urls]
+# Homepage   = "https://github.com/<usuario>/multimedia-search-mcp"
+# Repository = "https://github.com/<usuario>/multimedia-search-mcp"
+# Issues     = "https://github.com/<usuario>/multimedia-search-mcp/issues"
+# Pendiente: descomentar y sustituir <usuario> cuando el repositorio sea público.
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/multimedia_search_mcp"]
+
+[tool.pytest.ini_options]
+minversion = "8.0"
+testpaths = ["tests"]
+asyncio_mode = "auto"
+asyncio_default_fixture_loop_scope = "function"
+addopts = "-m 'not integration'"
+markers = [
+    "integration: requiere una instancia real de Prowlarr accesible (ejecutar con: pytest -m integration)",
+]
+
+[tool.mypy]
+python_version = "3.12"
+files = ["src"]
+check_untyped_defs = true
+disallow_untyped_defs = true
+no_implicit_optional = true
+warn_unused_ignores = true
+warn_redundant_casts = true
+warn_return_any = true
